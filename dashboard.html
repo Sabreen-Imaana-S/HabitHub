@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HabitHub - Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="dashboard-page">
+  <header class="dashboard-header">
+    <div>
+      <h1>HabitHub</h1>
+      <p id="welcomeText">Welcome, <span id="displayUser"></span></p>
+    </div>
+    <div class="header-actions">
+      <button id="darkModeBtn" class="icon-btn" aria-label="Toggle dark mode">🌙</button>
+      <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+    </div>
+  </header>
+
+  <main class="dashboard-main container">
+    <section class="overview card">
+      <div>
+        <h2>Today</h2>
+        <p id="todayDate"></p>
+      </div>
+      <div class="progress-container">
+        <label for="progressBar">Progress</label>
+        <div class="progress-bar-bg">
+          <div id="progressBar" class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <small id="progressLabel">0% completed</small>
+      </div>
+      <div class="streak-panel">
+        <p>Current streak: <span id="streakValue">0</span> days</p>
+        <p>Weekly completion: <span id="weeklyValue">0</span>/<span id="weeklyTotal">0</span></p>
+      </div>
+    </section>
+
+    <section class="habit-card card">
+      <div class="habit-card-header">
+        <h2>Track your habits</h2>
+        <div class="filter-group">
+          <button data-filter="all" class="filter-btn active">All</button>
+          <button data-filter="completed" class="filter-btn">Completed</button>
+          <button data-filter="pending" class="filter-btn">Pending</button>
+        </div>
+      </div>
+
+      <form id="habitForm" class="form-inline" novalidate>
+        <input type="text" id="habitName" placeholder="New habit name" required />
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+
+      <ul id="habitList" class="habit-list"></ul>
+    </section>
+
+    <section class="week-tracking card">
+      <h3>Weekly History (Last 7 days)</h3>
+      <div id="weekDays" class="week-grid"></div>
+    </section>
+  </main>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
