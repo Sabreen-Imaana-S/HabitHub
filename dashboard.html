@@ -14,6 +14,7 @@
     </div>
     <div class="header-actions">
       <button id="darkModeBtn" class="icon-btn" aria-label="Toggle dark mode">🌙</button>
+      <button id="exportBtn" class="btn btn-secondary">Export Data</button>
       <button id="logoutBtn" class="btn btn-secondary">Logout</button>
     </div>
   </header>
@@ -24,6 +25,7 @@
         <h2>Today</h2>
         <p id="todayDate"></p>
       </div>
+      <div id="quoteDisplay" class="quote-display"></div>
       <div class="progress-container">
         <label for="progressBar">Progress</label>
         <div class="progress-bar-bg">
@@ -49,6 +51,9 @@
 
       <form id="habitForm" class="form-inline" novalidate>
         <input type="text" id="habitName" placeholder="New habit name" required />
+        <select id="habitCategory" class="category-select">
+          <option value="">Select Category</option>
+        </select>
         <button type="submit" class="btn btn-primary">Add</button>
       </form>
 

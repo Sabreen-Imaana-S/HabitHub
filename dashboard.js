@@ -18,9 +18,17 @@ const filterButtons = document.querySelectorAll('.filter-btn');
 const logoutBtn = document.getElementById('logoutBtn');
 const darkModeBtn = document.getElementById('darkModeBtn');
 
+// New elements for JSON features
+const exportBtn = document.getElementById('exportBtn');
+const habitCategorySelect = document.getElementById('habitCategory');
+const quoteDisplay = document.getElementById('quoteDisplay');
+
 let usersData = JSON.parse(localStorage.getItem('habitHubUsers') || '{"users": []}');
 let currentUser = null;
 let currentFilter = 'all';
+
+// JSON data storage
+let jsonData = { quotes: [], categories: [] };
 
 function redirectToLogin() {
   localStorage.removeItem('habitHubIsLoggedIn');
@@ -231,10 +239,46 @@ function renderUI() {
   renderHabits();
 }
 
+// New function to load JSON data
+async function loadJsonData() {
+  try {
+    const response = await fetch('data.json');
+    if (response.ok) {
+      jsonData = await response.json();
+      populateCategoryDropdown();
+      displayRandomQuote();
+    } else {
+      console.warn('data.json not found, using default values');
+    }
+  } catch (error) {
+    console.warn('Error loading data.json:', error);
+  }
+}
+
+// New function to populate category dropdown
+function populateCategoryDropdown() {
+  habitCategorySelect.innerHTML = '<option value="">Select Category</option>';
+  jsonData.categories.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    habitCategorySelect.appendChild(option);
+  });
+}
+
+// New function to display random quote
+function displayRandomQuote() {
+  if (jsonData.quotes.length > 0) {
+    const randomQuote = jsonData.quotes[Math.floor(Math.random() * jsonData.quotes.length)];
+    quoteDisplay.textContent = `"${randomQuote}"`;
+  }
+}
+
 function addHabitHandler(e) {
   e.preventDefault();
 
   const name = habitNameInput.value.trim();
+  const category = habitCategorySelect.value;
   if (!name) {
     return;
   }
@@ -244,6 +288,7 @@ function addHabitHandler(e) {
   const newHabit = {
     id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
     name,
+    category: category || undefined, // Optional category
     completed: false,
     completedDates: []
   };
@@ -285,6 +330,30 @@ function setupDarkMode() {
   });
 }
 
+// New function to export data
+function exportData() {
+  const dataToExport = {
+    users: usersData.users,
+    exportDate: new Date().toISOString(),
+    version: '1.0'
+  };
+
+  const dataStr = JSON.stringify(dataToExport, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(dataBlob);
+  link.download = `habitHub-data-${formatDate()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// New function to setup export button
+function setupExport() {
+  exportBtn.addEventListener('click', exportData);
+}
+
 // UI Enhancement Functions
 function triggerHabitCompletionEffects(habitElement) {
   // Add completed class for green gradient background
@@ -295,6 +364,9 @@ function triggerHabitCompletionEffects(habitElement) {
 
   // Trigger confetti effect
   createConfetti();
+
+  // Show random motivational quote
+  displayRandomQuote();
 }
 
 function showCelebrationEmoji() {
@@ -339,9 +411,13 @@ function initDashboard() {
 
   if (!currentUser) return;
 
+  // Load JSON data and setup new features
+  loadJsonData();
+
   setupFilters();
   setupLogout();
   setupDarkMode();
+  setupExport();
 
   habitForm.addEventListener('submit', addHabitHandler);
 
