@@ -1,0 +1,23 @@
+- name: Deploy Habit Tracker App
+  hosts: webserver
+  become: yes
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Copy project files to server
+      copy:
+        src: /var/lib/jenkins/workspace/HabitHub/
+        dest: /var/www/html/
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
